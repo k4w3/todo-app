@@ -1,0 +1,6 @@
+-- select
+select * from TList;
+
+-- insert
+insert into TList (name, done) values('running',0);
+insert into TList (name, done) values('shopping',1);

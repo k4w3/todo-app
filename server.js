@@ -1,12 +1,16 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { DB } from "https://deno.land/x/sqlite/mod.ts";
 
 console.log("start");
 
 const router = new Router();
 
-router.get("/get1", (context) => {
-    console.log("/get1");
-    context.response.body = "kameyamatakahito";
+router.get("/api/TList", (context) => {
+    console.log("/api/TList");
+    // context.response.body = "kameyamatakahito";
+    const db = new DB("todo.db");
+    context.response.body = db.query("SELECT * FROM TList");
+    db.close();
 });
 
 

@@ -1,7 +1,7 @@
-function get1() {
+function selectTList() {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
-        req.open("GET", "/get1");
+        req.open("GET", "/api/TList");
         req.onload = (event) => {
             resolve(req.responseText);
         };
@@ -12,10 +12,10 @@ function get1() {
 window.onload = () => {
     // document.querySelector(".hoge").innerHTML="kameyama";
 
-    document.querySelector(".sendbutton").addEventListener("click", (e) => {
-        e.preventDefault();
+    document.querySelector(".sendbutton").addEventListener("click", (event) => {
+        event.preventDefault();
         // console.log("hahahaha");
-        get1()
+        selectTList()
         .then ((text) => {
             console.log(text);
         })
