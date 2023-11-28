@@ -4,3 +4,9 @@ select * from TList;
 -- insert
 insert into TList (name, done) values('running',0);
 insert into TList (name, done) values('shopping',1);
+
+-- update
+UPDATE TList SET name=hoge, done=0 WHERE id=1
+
+-- delete
+DELETE FROM TList WHERE id=1

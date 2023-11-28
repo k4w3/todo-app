@@ -14,5 +14,42 @@
             <input class="sendbutton" type="submit" value="送信">
         </form>
     </div>
+
+    <div>
+    <form>
+        <div>
+            名前:
+            <input class="textname" type="text">
+        </div>
+        <div>
+            対応済み:
+            <label><input class="radiodone" type="radio" name="radiodone" value="true">はい</label>
+            <label><input class="radiodone" type="radio" name="radiodone" value="false" checked>いいえ</label>
+        </div>
+        <div>
+            <button class="todosendbutton" type="button">送信</button>
+        </div>
+
+    </form>
+    </div>
+
+    <div>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>done</th>
+            </tr>
+            </thead>
+            <tbody class="todolist">
+            <!-- <tr>
+                <td>1</td>
+                <td>shopping</td>
+                <td>1</td>
+            </tr> -->
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
