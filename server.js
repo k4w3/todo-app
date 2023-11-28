@@ -17,6 +17,17 @@ router.get("/api/TList", (context) => {
     context.response.body = res;
 });
 
+router.get("/api/TList/:id", (context) => {
+    console.log("GET /api/TList:id");
+    const queryParams = getQuery(context, { mergeParams: true });
+    console.log(queryParams);
+
+    const db = new DB("todo.db");
+    let res = db.queryEntries("SELECT id, name, done FROM TList WHERE id=?", [queryParams.id]);
+    db.close();
+    context.response.body = res;
+});
+
 router.post("/api/TList", async (context) => {
     console.log("POST /api/TList");
     const params = await context.request.body({type:"form"}).value;

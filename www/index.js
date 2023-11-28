@@ -9,6 +9,17 @@ function selectTList() {
     });
 };
 
+function getTList(id) {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.open("GET", "/api/TList/" + id);
+        req.onload = (event) => {
+            resolve(req.responseText);
+        };
+        req.send();
+    });
+};
+
 function postTList(name, done) {
     return new Promise((resolve, reject) => {
 
@@ -81,16 +92,80 @@ function todoInsert (id, name, done) {
     tdName.innerHTML = name;
     let tdDone = document.createElement("td");
     tdDone.innerHTML = done;
+    let tdEditButton = document.createElement("td");
+    let editButton = document.createElement("button");
+    editButton.textContent = "編集";
+    editButton.setAttribute("class", "todoeditbutton");
+    editButton.setAttribute("name", id);
+    tdEditButton.appendChild(editButton);
 
     let tr = document.createElement("tr");
     tr.appendChild(tdId);
     tr.appendChild(tdName);
     tr.appendChild(tdDone);
+    tr.appendChild(tdEditButton);
 
     document.querySelector(".todolist").appendChild(tr);
 };
 
+function openEdit (id) {
+    getTList(id)
+    .then((todoObj) => {
+        console.log(todoObj);
+        let todoArray = JSON.parse(todoObj);
+        console.log(todoArray[0]);
+
+        let spanId = document.createElement("span");
+        let spanName = document.createElement("span");
+        let spanDone = document.createElement("span");
+
+        let inputId = document.createElement("input");
+        let inputName = document.createElement("input");
+        let inputDone = document.createElement("input");
+        
+        let okButton = document.createElement("button");
+
+        spanId.textContent = "id: ";
+        spanName.textContent = "name: ";
+        spanDone.textContent = "done: ";
+
+        okButton.textContent = "OK";
+        okButton.setAttribute("class", "okbutton");
+
+        inputId.setAttribute("type", "text");
+        inputId.setAttribute("value", todoArray[0].id);
+        inputName.setAttribute("type", "text");
+        inputName.setAttribute("value", todoArray[0].name);
+        inputDone.setAttribute("type", "text");
+        if (todoArray[0].Done) {
+            inputDone.setAttribute("value", "true");
+        } else {
+            inputDone.setAttribute("value", "false");
+        }
+
+        inputId.style.marginRight = "1em";
+        inputName.style.marginRight = "1em";
+        inputDone.style.marginRight = "1em";
+
+        document.querySelector(".edittodo").appendChild(spanId);
+        document.querySelector(".edittodo").appendChild(inputId);
+        document.querySelector(".edittodo").appendChild(spanName);
+        document.querySelector(".edittodo").appendChild(inputName);
+        document.querySelector(".edittodo").appendChild(spanDone);
+        document.querySelector(".edittodo").appendChild(inputDone);
+        document.querySelector(".edittodo").appendChild(okButton);
+    });
+}
+
+
 window.onload = () => {
+    // getTList(3)
+    // .then ((todo) => {
+    //     console.log(todo);
+    // })
+
+    // openEdit(3);
+
     // document.querySelector(".hoge").innerHTML="kameyama";
     // let tdId = document.createElement("td");
     // tdId.innerHTML = "101";
@@ -119,6 +194,16 @@ window.onload = () => {
             console.log(todo);
             todoInsert(todo.id, todo.name, todo.done);
         };
+    })
+    .then (() => {
+        let todoEditButton = document.querySelector(".todoeditbutton");
+        todoEditButton.addEventListener("click", (event) => {
+            // event.preventDefault();
+
+            console.log(todoEditButton.name);
+            let id = todoEditButton.name;
+            openEdit(id);
+        });
     });
 
     document.querySelector(".todosendbutton").addEventListener("click", (event) => {
