@@ -144,6 +144,7 @@ function openEdit (id) {
             putTList(inputName.value, inputDone.value, id)
             .then ((text) => {
                 console.log(text);
+                reloadTbody();
             });
         });
 
@@ -171,34 +172,8 @@ function openEdit (id) {
     });
 }
 
-
-window.onload = () => {
-    // getTList(3)
-    // .then ((todo) => {
-    //     console.log(todo);
-    // })
-
-    // openEdit(3);
-
-    // document.querySelector(".hoge").innerHTML="kameyama";
-    // let tdId = document.createElement("td");
-    // tdId.innerHTML = "101";
-    // let tdName = document.createElement("td");
-    // tdName.innerHTML = "kame";
-    // let tdDone = document.createElement("td");
-    // tdDone.innerHTML = "1";
-
-    // let tr = document.createElement("tr");
-    // tr.appendChild(tdId);
-    // tr.appendChild(tdName);
-    // tr.appendChild(tdDone);
-
-    // document.querySelector(".todolist").appendChild(tr);
-
-    // todoInsert("10", "taka", "0" );
-    // todoInsert("11", "ha", "0" );
-    // todoInsert("12", "haha", "0" );
-
+function reloadTbody () {
+    document.querySelector(".todolist").innerHTML = "";
     selectTList()
     .then ((list) => {
         console.log(list);
@@ -235,11 +210,42 @@ window.onload = () => {
                     deleteTList(id)
                     .then ((text) => {
                         console.log(text);
+                        reloadTbody();
                     });
                 };
             });
         }
     });
+}
+
+window.onload = () => {
+    // getTList(3)
+    // .then ((todo) => {
+    //     console.log(todo);
+    // })
+
+    // openEdit(3);
+
+    // document.querySelector(".hoge").innerHTML="kameyama";
+    // let tdId = document.createElement("td");
+    // tdId.innerHTML = "101";
+    // let tdName = document.createElement("td");
+    // tdName.innerHTML = "kame";
+    // let tdDone = document.createElement("td");
+    // tdDone.innerHTML = "1";
+
+    // let tr = document.createElement("tr");
+    // tr.appendChild(tdId);
+    // tr.appendChild(tdName);
+    // tr.appendChild(tdDone);
+
+    // document.querySelector(".todolist").appendChild(tr);
+
+    // todoInsert("10", "taka", "0" );
+    // todoInsert("11", "ha", "0" );
+    // todoInsert("12", "haha", "0" );
+
+    reloadTbody();
 
     document.querySelector(".todosendbutton").addEventListener("click", (event) => {
         event.preventDefault();
@@ -260,6 +266,7 @@ window.onload = () => {
         postTList(todoName, todoDone)
         .then ((result) => {
             console.log(result);
+            reloadTbody();
         });
 
     });
