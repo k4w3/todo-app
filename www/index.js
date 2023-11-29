@@ -123,6 +123,16 @@ function openEdit (id) {
         console.log(todoObj);
         let todoArray = JSON.parse(todoObj);
         let todo = todoArray[0]
+        switch (todo.done) {
+            case 1:
+                todo.done = "true";
+                break;
+            case 0:
+                todo.done = "false";
+                break;
+            default:
+                // そのままの値
+        }
         console.log(todo);
 
         let spanName = document.createElement("span");
@@ -151,17 +161,14 @@ function openEdit (id) {
         inputName.setAttribute("type", "text");
         inputName.setAttribute("value", todo.name);
         inputDone.setAttribute("type", "text");
-        if (todo.Done) {
-            inputDone.setAttribute("value", "true");
-        } else {
-            inputDone.setAttribute("value", "false");
-        }
+        inputDone.setAttribute("value", todo.done);
 
         inputName.style.marginRight = "1em";
         inputDone.style.marginRight = "1em";
 
         let editForm = document.createElement("form");
 
+        editForm.appendChild(spanName);
         editForm.appendChild(inputName);
         editForm.appendChild(spanDone);
         editForm.appendChild(inputDone);
@@ -180,6 +187,16 @@ function reloadTbody () {
         let listObjArray = JSON.parse(list);
         for (let i = 0; i < listObjArray.length; i++) {
             let todo = listObjArray[i];
+            switch (todo.done) {
+                case 1:
+                    todo.done = "true";
+                    break;
+                case 0:
+                    todo.done = "false";
+                    break;
+                default:
+                    // そのままの値
+            }
             console.log(todo);
             todoInsert(todo.id, todo.name, todo.done);
         };
