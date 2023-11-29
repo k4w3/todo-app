@@ -92,6 +92,7 @@ function todoInsert (id, name, done) {
     tdName.innerHTML = name;
     let tdDone = document.createElement("td");
     tdDone.innerHTML = done;
+
     let tdEditButton = document.createElement("td");
     let editButton = document.createElement("button");
     editButton.textContent = "編集";
@@ -99,11 +100,19 @@ function todoInsert (id, name, done) {
     editButton.setAttribute("name", id);
     tdEditButton.appendChild(editButton);
 
+    let tdDeleteButton = document.createElement("td");
+    let deleteButton = document.createElement("button");
+    deleteButton.textContent = "削除";
+    deleteButton.setAttribute("class", "tododeletebutton");
+    deleteButton.setAttribute("name", id);
+    tdDeleteButton.appendChild(deleteButton);
+
     let tr = document.createElement("tr");
     tr.appendChild(tdId);
     tr.appendChild(tdName);
     tr.appendChild(tdDone);
     tr.appendChild(tdEditButton);
+    tr.appendChild(tdDeleteButton);
 
     document.querySelector(".todolist").appendChild(tr);
 };
@@ -113,47 +122,52 @@ function openEdit (id) {
     .then((todoObj) => {
         console.log(todoObj);
         let todoArray = JSON.parse(todoObj);
-        console.log(todoArray[0]);
+        let todo = todoArray[0]
+        console.log(todo);
 
-        let spanId = document.createElement("span");
         let spanName = document.createElement("span");
         let spanDone = document.createElement("span");
 
-        let inputId = document.createElement("input");
         let inputName = document.createElement("input");
         let inputDone = document.createElement("input");
-        
+
         let okButton = document.createElement("button");
 
-        spanId.textContent = "id: ";
         spanName.textContent = "name: ";
         spanDone.textContent = "done: ";
 
         okButton.textContent = "OK";
+        okButton.setAttribute("type", "button");
         okButton.setAttribute("class", "okbutton");
 
-        inputId.setAttribute("type", "text");
-        inputId.setAttribute("value", todoArray[0].id);
+        okButton.addEventListener("click", (event) => {
+            putTList(inputName.value, inputDone.value, id)
+            .then ((text) => {
+                console.log(text);
+            });
+        });
+
         inputName.setAttribute("type", "text");
-        inputName.setAttribute("value", todoArray[0].name);
+        inputName.setAttribute("value", todo.name);
         inputDone.setAttribute("type", "text");
-        if (todoArray[0].Done) {
+        if (todo.Done) {
             inputDone.setAttribute("value", "true");
         } else {
             inputDone.setAttribute("value", "false");
         }
 
-        inputId.style.marginRight = "1em";
         inputName.style.marginRight = "1em";
         inputDone.style.marginRight = "1em";
 
-        document.querySelector(".edittodo").appendChild(spanId);
-        document.querySelector(".edittodo").appendChild(inputId);
-        document.querySelector(".edittodo").appendChild(spanName);
-        document.querySelector(".edittodo").appendChild(inputName);
-        document.querySelector(".edittodo").appendChild(spanDone);
-        document.querySelector(".edittodo").appendChild(inputDone);
-        document.querySelector(".edittodo").appendChild(okButton);
+        let editForm = document.createElement("form");
+
+        editForm.appendChild(inputName);
+        editForm.appendChild(spanDone);
+        editForm.appendChild(inputDone);
+        editForm.appendChild(okButton);
+
+        document.querySelector(".edittodo").innerHTML = "";
+        document.querySelector(".edittodo").appendChild(editForm);
     });
 }
 
@@ -196,14 +210,35 @@ window.onload = () => {
         };
     })
     .then (() => {
-        let todoEditButton = document.querySelector(".todoeditbutton");
-        todoEditButton.addEventListener("click", (event) => {
-            // event.preventDefault();
+        let todoEditButtonArray = document.querySelectorAll(".todoeditbutton");
+        for (let i = 0; i < todoEditButtonArray.length; i++) {
+            let todoEditButton = todoEditButtonArray[i];
+            // let todoEditButton = document.querySelector(".todoeditbutton");
+            todoEditButton.addEventListener("click", (event) => {
+                // event.preventDefault();
 
-            console.log(todoEditButton.name);
-            let id = todoEditButton.name;
-            openEdit(id);
-        });
+                console.log(todoEditButton.name);
+                let id = todoEditButton.name;
+                openEdit(id);
+            });
+        }
+        let todoDeleteButtonArray = document.querySelectorAll(".tododeletebutton");
+        for (let i = 0; i < todoDeleteButtonArray.length; i++) {
+            let todoDeleteButton = todoDeleteButtonArray[i];
+            todoDeleteButton.addEventListener("click", (event) => {
+                // event.preventDefault();
+                console.log(todoDeleteButton.name);
+                let confirm = window.confirm("消してもいいですか？");
+
+                if (confirm) {
+                    let id = todoDeleteButton.name;
+                    deleteTList(id)
+                    .then ((text) => {
+                        console.log(text);
+                    });
+                };
+            });
+        }
     });
 
     document.querySelector(".todosendbutton").addEventListener("click", (event) => {
