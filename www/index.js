@@ -84,6 +84,7 @@ function createEditForm (id) {
             .then ((text) => {
                 console.log(text);
                 reloadTbody();
+                document.querySelector(".edittodo").innerHTML = "";
             });
         });
 
