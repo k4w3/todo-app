@@ -49,46 +49,62 @@ function createEditForm (id) {
         console.log(todo);
 
         let spanName = document.createElement("span");
-        let spanDone = document.createElement("span");
+        spanName.textContent = "名前: ";
 
         let inputName = document.createElement("input");
-        let inputDone = document.createElement("input");
+        inputName.setAttribute("type", "text");
+        inputName.setAttribute("value", todo.name);
+        inputName.style.marginRight = "1em";
+
+        let spanDone = document.createElement("span");
+        spanDone.textContent = "対応済み: ";
+
+        let labelDoneTrue = document.createElement("label");
+        labelDoneTrue.innerHTML = '<input type="radio" id="editradiosdoneTrue" name="editradiosdone" value="1" style="marginRight: 1em">はい'
+
+        let labelDoneFalse = document.createElement("label");
+        labelDoneFalse.innerHTML = '<input type="radio" id="editradiosdoneFalse" name="editradiosdone" value="0" style="marginRight: 1em">いいえ'
 
         let okButton = document.createElement("button");
-
-        spanName.textContent = "name: ";
-        spanDone.textContent = "done: ";
-
         okButton.textContent = "OK";
         okButton.setAttribute("type", "button");
         okButton.setAttribute("class", "okbutton");
 
         okButton.addEventListener("click", (event) => {
-            putTList(inputName.value, inputDone.value, id)
+            let inputDoneTrue = document.querySelector("#editradiosdoneTrue");
+            let inputDoneFalse = document.querySelector("#editradiosdoneFalse");
+            let inputDone;
+            if (inputDoneTrue.checked) {
+                inputDone = inputDoneTrue.value;
+            } else if (inputDoneFalse.checked) {
+                inputDone = inputDoneFalse.value;
+            }
+
+            putTList(inputName.value, inputDone, id)
             .then ((text) => {
                 console.log(text);
                 reloadTbody();
             });
         });
 
-        inputName.setAttribute("type", "text");
-        inputName.setAttribute("value", todo.name);
-        inputDone.setAttribute("type", "text");
-        inputDone.setAttribute("value", todo.done);
-
-        inputName.style.marginRight = "1em";
-        inputDone.style.marginRight = "1em";
-
         let editForm = document.createElement("form");
 
         editForm.appendChild(spanName);
         editForm.appendChild(inputName);
         editForm.appendChild(spanDone);
-        editForm.appendChild(inputDone);
+        editForm.appendChild(labelDoneTrue);
+        editForm.appendChild(labelDoneFalse);
         editForm.appendChild(okButton);
 
         document.querySelector(".edittodo").innerHTML = "";
         document.querySelector(".edittodo").appendChild(editForm);
+
+        if (todo.done === "true") {
+            document.querySelector("#editradiosdoneTrue").checked = true;
+        }
+        if (todo.done === "false") {
+            document.querySelector("#editradiosdoneFalse").checked = true;
+        }
     });
 }
 
@@ -155,7 +171,7 @@ window.onload = () => {
     document.querySelector(".todosendbutton").addEventListener("click", (event) => {
         event.preventDefault();
         let todoName = document.querySelector(".textname").value;
-        let radiosDone = document.querySelectorAll(".radiodone");
+        let radiosDone = document.querySelectorAll(".inputradiosdone");
         let todoDone;
         for (let i = 0; i < radiosDone.length; i++) {
             let r = radiosDone[i];
