@@ -96,7 +96,7 @@ function reloadTbody () {
     document.querySelector(".todolist").innerHTML = "";
     selectTList()
     .then ((list) => {
-        console.log(list);
+        // console.log(list);
         let listObjArray = JSON.parse(list);
         for (let i = 0; i < listObjArray.length; i++) {
             let todo = listObjArray[i];
@@ -149,37 +149,11 @@ function reloadTbody () {
 }
 
 window.onload = () => {
-    // getTList(3)
-    // .then ((todo) => {
-    //     console.log(todo);
-    // })
-
-    // createEditForm(3);
-
-    // document.querySelector(".hoge").innerHTML="kameyama";
-    // let tdId = document.createElement("td");
-    // tdId.innerHTML = "101";
-    // let tdName = document.createElement("td");
-    // tdName.innerHTML = "kame";
-    // let tdDone = document.createElement("td");
-    // tdDone.innerHTML = "1";
-
-    // let tr = document.createElement("tr");
-    // tr.appendChild(tdId);
-    // tr.appendChild(tdName);
-    // tr.appendChild(tdDone);
-
-    // document.querySelector(".todolist").appendChild(tr);
-
-    // drawTodoList("10", "taka", "0" );
-    // drawTodoList("11", "ha", "0" );
-    // drawTodoList("12", "haha", "0" );
 
     reloadTbody();
 
     document.querySelector(".todosendbutton").addEventListener("click", (event) => {
         event.preventDefault();
-        console.log("todo");
         let todoName = document.querySelector(".textname").value;
         let radiosDone = document.querySelectorAll(".radiodone");
         let todoDone;
@@ -201,29 +175,29 @@ window.onload = () => {
 
     });
 
-    document.querySelector(".sendbutton").addEventListener("click", (event) => {
-        event.preventDefault();
-        // console.log("hahahaha");
-        // selectTList()
-        // .then ((text) => {
-        //     console.log(text);
-        // })
+    // document.querySelector(".sendbutton").addEventListener("click", (event) => {
+    //     event.preventDefault();
+    //     // console.log("hahahaha");
+    //     // selectTList()
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // })
 
-        // postTList("foo", 0)
-        // .then ((text) => {
-        //     console.log(text);
-        // });
+    //     // postTList("foo", 0)
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // });
 
-        // putTList("var", 1, 4)
-        // .then ((text) => {
-        //     console.log(text);
-        // });
+    //     // putTList("var", 1, 4)
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // });
 
-        // deleteTList(4)
-        // .then ((text) => {
-        //     console.log(text);
-        // });
+    //     // deleteTList(4)
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // });
 
-    });
+    // });
 
 };
