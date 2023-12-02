@@ -85,7 +85,7 @@ function deleteTList(id) {
     });
 };
 
-function todoInsert (id, name, done) {
+function drawTodoList (id, name, done) {
     let tdId = document.createElement("td");
     tdId.innerHTML = id;
     let tdName = document.createElement("td");
@@ -117,7 +117,7 @@ function todoInsert (id, name, done) {
     document.querySelector(".todolist").appendChild(tr);
 };
 
-function openEdit (id) {
+function createEditForm (id) {
     getTList(id)
     .then((todoObj) => {
         console.log(todoObj);
@@ -198,7 +198,7 @@ function reloadTbody () {
                     // そのままの値
             }
             console.log(todo);
-            todoInsert(todo.id, todo.name, todo.done);
+            drawTodoList(todo.id, todo.name, todo.done);
         };
     })
     .then (() => {
@@ -211,7 +211,7 @@ function reloadTbody () {
 
                 console.log(todoEditButton.name);
                 let id = todoEditButton.name;
-                openEdit(id);
+                createEditForm(id);
             });
         }
         let todoDeleteButtonArray = document.querySelectorAll(".tododeletebutton");
@@ -241,7 +241,7 @@ window.onload = () => {
     //     console.log(todo);
     // })
 
-    // openEdit(3);
+    // createEditForm(3);
 
     // document.querySelector(".hoge").innerHTML="kameyama";
     // let tdId = document.createElement("td");
@@ -258,9 +258,9 @@ window.onload = () => {
 
     // document.querySelector(".todolist").appendChild(tr);
 
-    // todoInsert("10", "taka", "0" );
-    // todoInsert("11", "ha", "0" );
-    // todoInsert("12", "haha", "0" );
+    // drawTodoList("10", "taka", "0" );
+    // drawTodoList("11", "ha", "0" );
+    // drawTodoList("12", "haha", "0" );
 
     reloadTbody();
 
