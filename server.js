@@ -8,7 +8,6 @@ const router = new Router();
 
 router.get("/api/TList", (context) => {
     console.log("GET /api/TList");
-    // context.response.body = "kameyamatakahito";
     const db = new DB("todo.db");
     // let res = db.query("SELECT * FROM TList");
     let res = db.queryEntries("SELECT id, name, done FROM TList");
