@@ -115,8 +115,7 @@ function reloadTbody () {
     .then ((list) => {
         // console.log(list);
         let listObjArray = JSON.parse(list);
-        for (let i = 0; i < listObjArray.length; i++) {
-            let todo = listObjArray[i];
+        listObjArray.forEach((todo) => {
             switch (todo.done) {
                 case 1:
                     todo.done = "true";
@@ -129,29 +128,24 @@ function reloadTbody () {
             }
             console.log(todo);
             drawTodoList(todo.id, todo.name, todo.done);
-        };
+        });
     })
     .then (() => {
         let todoEditButtonArray = document.querySelectorAll(".todoeditbutton");
-        for (let i = 0; i < todoEditButtonArray.length; i++) {
-            let todoEditButton = todoEditButtonArray[i];
-            // let todoEditButton = document.querySelector(".todoeditbutton");
-            todoEditButton.addEventListener("click", (event) => {
-                // event.preventDefault();
-
-                console.log(todoEditButton.name);
-                let id = todoEditButton.name;
-                createEditForm(id);
-            });
-        }
+        todoEditButtonArray.forEach((todoEditButton)=> {
+                todoEditButton.addEventListener("click", (event) => {
+                    // event.preventDefault();
+                    console.log(todoEditButton.name);
+                    let id = todoEditButton.name;
+                    createEditForm(id);
+                });
+        });
         let todoDeleteButtonArray = document.querySelectorAll(".tododeletebutton");
-        for (let i = 0; i < todoDeleteButtonArray.length; i++) {
-            let todoDeleteButton = todoDeleteButtonArray[i];
+        todoDeleteButtonArray.forEach((todoDeleteButton) => {
             todoDeleteButton.addEventListener("click", (event) => {
                 // event.preventDefault();
                 console.log(todoDeleteButton.name);
                 let confirm = window.confirm("消してもいいですか？");
-
                 if (confirm) {
                     let id = todoDeleteButton.name;
                     deleteTList(id)
@@ -161,7 +155,7 @@ function reloadTbody () {
                     });
                 };
             });
-        }
+        });
     });
 }
 
@@ -174,12 +168,11 @@ window.onload = () => {
         let todoName = document.querySelector(".textname").value;
         let radiosDone = document.querySelectorAll(".inputradiosdone");
         let todoDone;
-        for (let i = 0; i < radiosDone.length; i++) {
-            let r = radiosDone[i];
-            if (r.checked) {
-                todoDone = r.value;
+        radiosDone.forEach((radio) => {
+            if (radio.checked) {
+                todoDone = radio.value;
             }
-        }
+        });
 
         console.log(todoDone);
         console.log(todoName);
