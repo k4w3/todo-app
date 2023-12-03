@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo</title>
+    <script src="./kdb.js"></script>
+    <script src="./index.js"></script>
+</head>
+<body>
+    <h1>ToDo</h1>
+    <!-- <div class="hoge"></div>
+    <div>
+        <form>
+            <input class="sendbutton" type="submit" value="送信">
+        </form>
+    </div> -->
+    <h3 style="border-bottom: 1px solid">新規追加</h3>
+    <div>
+    <form>
+        <div>
+            名前:
+            <input class="textname" type="text">
+        </div>
+        <div>
+            対応済み:
+            <label><input class="inputradiosdone" type="radio" name="inputradiosdone" value="1">はい</label>
+            <label><input class="inputradiosdone" type="radio" name="inputradiosdone" value="0" checked>いいえ</label>
+        </div>
+        <div>
+            <button class="todosendbutton" type="button">送信</button>
+        </div>
+
+    </form>
+    </div>
+
+    <h3 style="border-bottom: 1px solid">ToDo</h3>
+    <div>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>対応済み</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="todolist">
+            <!-- <tr>
+                <td>1</td>
+                <td>shopping</td>
+                <td>1</td>
+            </tr> -->
+            </tbody>
+        </table>
+    </div>
+    <div class="edittodo" style="margin: 1em;"></div>
+</body>
+</html>
