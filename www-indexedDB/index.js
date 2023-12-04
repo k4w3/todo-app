@@ -1,3 +1,5 @@
+let db;
+
 function mydbopen (dbName, dbVer) {
     // window.indexedDB.deleteDatabase("todo");
     return kdbOpen(dbName, dbVer, (event) => {
@@ -82,9 +84,80 @@ function drawTodoList (id, name, done) {
     document.querySelector(".todolist").appendChild(tr);
 };
 
-function createEditForm (db, id) {
-    kdbGet(db, "storeList", Number(id))
-    .then((todo) => {
+async function createEditForm (db, id) {
+    let todo = await kdbGet(db, "storeList", Number(id))
+    switch (todo.done) {
+        case 1:
+            todo.done = "true";
+            break;
+        case 0:
+            todo.done = "false";
+            break;
+        default:
+            // そのままの値
+    }
+
+    let spanName = document.createElement("span");
+    spanName.textContent = "名前: ";
+
+    let inputName = document.createElement("input");
+    inputName.setAttribute("type", "text");
+    inputName.setAttribute("value", todo.name);
+    inputName.style.marginRight = "1em";
+
+    let spanDone = document.createElement("span");
+    spanDone.textContent = "対応済み: ";
+
+    let labelDoneTrue = document.createElement("label");
+    labelDoneTrue.innerHTML = '<input type="radio" id="editradiosdoneTrue" name="editradiosdone" value="1" style="marginRight: 1em">はい'
+
+    let labelDoneFalse = document.createElement("label");
+    labelDoneFalse.innerHTML = '<input type="radio" id="editradiosdoneFalse" name="editradiosdone" value="0" style="marginRight: 1em">いいえ'
+
+    let okButton = document.createElement("button");
+    okButton.textContent = "OK";
+    okButton.setAttribute("type", "button");
+    okButton.setAttribute("class", "okbutton");
+
+    okButton.addEventListener("click", async (event) => {
+        let inputDoneTrue = document.querySelector("#editradiosdoneTrue");
+        let inputDoneFalse = document.querySelector("#editradiosdoneFalse");
+        let inputDone;
+        if (inputDoneTrue.checked) {
+            inputDone = inputDoneTrue.value;
+        } else if (inputDoneFalse.checked) {
+            inputDone = inputDoneFalse.value;
+        }
+
+        await kdbPut(db, "storeList", {id:Number(id), name:inputName.value, done:inputDone})
+        reloadTbody();
+        document.querySelector(".edittodo").innerHTML = "";
+    });
+
+    let editForm = document.createElement("form");
+
+    editForm.appendChild(spanName);
+    editForm.appendChild(inputName);
+    editForm.appendChild(spanDone);
+    editForm.appendChild(labelDoneTrue);
+    editForm.appendChild(labelDoneFalse);
+    editForm.appendChild(okButton);
+
+    document.querySelector(".edittodo").innerHTML = "";
+    document.querySelector(".edittodo").appendChild(editForm);
+
+    if (todo.done === "true") {
+        document.querySelector("#editradiosdoneTrue").checked = true;
+    }
+    if (todo.done === "false") {
+        document.querySelector("#editradiosdoneFalse").checked = true;
+    }
+}
+
+async function reloadTbody () {
+    document.querySelector(".todolist").innerHTML = "";
+    let list = await kdbFind(db, "storeList", () => 1 === 1);
+    list.forEach((todo) => {
         switch (todo.done) {
             case 1:
                 todo.done = "true";
@@ -95,149 +168,81 @@ function createEditForm (db, id) {
             default:
                 // そのままの値
         }
-
-        let spanName = document.createElement("span");
-        spanName.textContent = "名前: ";
-
-        let inputName = document.createElement("input");
-        inputName.setAttribute("type", "text");
-        inputName.setAttribute("value", todo.name);
-        inputName.style.marginRight = "1em";
-
-        let spanDone = document.createElement("span");
-        spanDone.textContent = "対応済み: ";
-
-        let labelDoneTrue = document.createElement("label");
-        labelDoneTrue.innerHTML = '<input type="radio" id="editradiosdoneTrue" name="editradiosdone" value="1" style="marginRight: 1em">はい'
-
-        let labelDoneFalse = document.createElement("label");
-        labelDoneFalse.innerHTML = '<input type="radio" id="editradiosdoneFalse" name="editradiosdone" value="0" style="marginRight: 1em">いいえ'
-
-        let okButton = document.createElement("button");
-        okButton.textContent = "OK";
-        okButton.setAttribute("type", "button");
-        okButton.setAttribute("class", "okbutton");
-
-        okButton.addEventListener("click", (event) => {
-            let inputDoneTrue = document.querySelector("#editradiosdoneTrue");
-            let inputDoneFalse = document.querySelector("#editradiosdoneFalse");
-            let inputDone;
-            if (inputDoneTrue.checked) {
-                inputDone = inputDoneTrue.value;
-            } else if (inputDoneFalse.checked) {
-                inputDone = inputDoneFalse.value;
-            }
-
-            kdbPut(db, "storeList", {id:Number(id), name:inputName.value, done:inputDone})
-            .then((key) => {
-                reloadTbody(db);
-                document.querySelector(".edittodo").innerHTML = "";
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        });
-
-        let editForm = document.createElement("form");
-
-        editForm.appendChild(spanName);
-        editForm.appendChild(inputName);
-        editForm.appendChild(spanDone);
-        editForm.appendChild(labelDoneTrue);
-        editForm.appendChild(labelDoneFalse);
-        editForm.appendChild(okButton);
-
-        document.querySelector(".edittodo").innerHTML = "";
-        document.querySelector(".edittodo").appendChild(editForm);
-
-        if (todo.done === "true") {
-            document.querySelector("#editradiosdoneTrue").checked = true;
-        }
-        if (todo.done === "false") {
-            document.querySelector("#editradiosdoneFalse").checked = true;
-        }
-    })
-    .catch((error) => {
-        console.log("kdbGetError: " + error);
+        drawTodoList(todo.id, todo.name, todo.done);
     });
-}
-
-function reloadTbody (db) {
-    document.querySelector(".todolist").innerHTML = "";
-    kdbFind(db, "storeList", () => 1 === 1)
-    .then ((list) => {
-        list.forEach((todo) => {
-            switch (todo.done) {
-                case 1:
-                    todo.done = "true";
-                    break;
-                case 0:
-                    todo.done = "false";
-                    break;
-                default:
-                    // そのままの値
-            }
-            drawTodoList(todo.id, todo.name, todo.done);
-        });
-    })
-    .then (() => {
-        let todoEditButtonArray = document.querySelectorAll(".todoeditbutton");
-        todoEditButtonArray.forEach((todoEditButton)=> {
-                todoEditButton.addEventListener("click", (event) => {
-                    // event.preventDefault();
-                    let id = todoEditButton.name;
-                    createEditForm(db, id);
-                });
-        });
-        let todoDeleteButtonArray = document.querySelectorAll(".tododeletebutton");
-        todoDeleteButtonArray.forEach((todoDeleteButton) => {
-            todoDeleteButton.addEventListener("click", (event) => {
+    let todoEditButtonArray = document.querySelectorAll(".todoeditbutton");
+    todoEditButtonArray.forEach((todoEditButton)=> {
+            todoEditButton.addEventListener("click", (event) => {
                 // event.preventDefault();
-                let confirm = window.confirm("消してもいいですか？");
-                if (confirm) {
-                    let id = todoDeleteButton.name;
-                    kdbDelete(db, "storeList", Number(id))
-                    .then(() => {
-                        reloadTbody(db);
-                    })
-                    .catch((error) => {
-                        console.log("kdbDeleteError: " + error);
-                    });
-
-                };
+                let id = todoEditButton.name;
+                createEditForm(db, id);
             });
+    });
+    let todoDeleteButtonArray = document.querySelectorAll(".tododeletebutton");
+    todoDeleteButtonArray.forEach((todoDeleteButton) => {
+        todoDeleteButton.addEventListener("click", async (event) => {
+            // event.preventDefault();
+            let confirm = window.confirm("消してもいいですか？");
+            if (confirm) {
+                let id = todoDeleteButton.name;
+                await kdbDelete(db, "storeList", Number(id));
+                reloadTbody();
+            };
         });
     });
 }
 
-window.onload = () => {
+window.onload = async () => {
     const dbName = "todo";
     const dbVer = "4";
 
-    mydbopen(dbName, dbVer)
-    .then((db) => {
+    db = await mydbopen(dbName, dbVer);
+    reloadTbody();
 
-        reloadTbody(db);
-
-        document.querySelector(".todosendbutton").addEventListener("click", (event) => {
-            event.preventDefault();
-            let todoName = document.querySelector(".textname").value;
-            let radiosDone = document.querySelectorAll(".inputradiosdone");
-            let todoDone;
-            radiosDone.forEach((radio) => {
-                if (radio.checked) {
-                    todoDone = radio.value;
-                }
-            });
-
-            kdbAdd(db, "storeList", {name:todoName, done:todoDone})
-            .then((key) => {
-                console.log(key);
-                reloadTbody(db);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    document.querySelector(".todosendbutton").addEventListener("click", async (event) => {
+        event.preventDefault();
+        let todoName = document.querySelector(".textname").value;
+        let radiosDone = document.querySelectorAll(".inputradiosdone");
+        let todoDone;
+        radiosDone.forEach((radio) => {
+            if (radio.checked) {
+                todoDone = radio.value;
+            }
         });
+
+        let key = await kdbAdd(db, "storeList", {name:todoName, done:todoDone})
+        console.log(key);
+        reloadTbody();
     });
 };
+// window.onload = () => {
+//     const dbName = "todo";
+//     const dbVer = "4";
+
+//     mydbopen(dbName, dbVer)
+//     .then((ldb) => {
+//         db = ldb;
+//         reloadTbody();
+
+//         document.querySelector(".todosendbutton").addEventListener("click", (event) => {
+//             event.preventDefault();
+//             let todoName = document.querySelector(".textname").value;
+//             let radiosDone = document.querySelectorAll(".inputradiosdone");
+//             let todoDone;
+//             radiosDone.forEach((radio) => {
+//                 if (radio.checked) {
+//                     todoDone = radio.value;
+//                 }
+//             });
+
+//             kdbAdd(db, "storeList", {name:todoName, done:todoDone})
+//             .then((key) => {
+//                 console.log(key);
+//                 reloadTbody();
+//             })
+//             .catch((error) => {
+//                 console.log(error);
+//             });
+//         });
+//     });
+// };
