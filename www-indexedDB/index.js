@@ -83,12 +83,10 @@ function drawTodoList (id, name, done) {
 };
 
 function createEditForm (db, id) {
-    kdbGet(db, "storeList", id)
-    .then((todoList) => {
-        console.log("todoList: " + todoList);
-        let todo = todoList[0]
-        console.log("todo: " + todo);
-        console.log("done: " + todo.done);
+    console.log(typeof id);
+    console.log(typeof Number(id));
+    kdbGet(db, "storeList", Number(id))
+    .then((todo) => {
         switch (todo.done) {
             case 1:
                 todo.done = "true";
@@ -133,10 +131,10 @@ function createEditForm (db, id) {
                 inputDone = inputDoneFalse.value;
             }
 
-            kdbPut(db, "storeList", {name:inputName.value, done:inputDone}, id)
+            kdbPut(db, "storeList", {id:Number(id), name:inputName.value, done:inputDone})
             .then((key) => {
                 console.log(key);
-                reloadTbody();
+                reloadTbody(db);
                 document.querySelector(".edittodo").innerHTML = "";
             })
             .catch((error) => {
@@ -169,10 +167,11 @@ function createEditForm (db, id) {
 }
 
 function reloadTbody (db) {
+    console.log(db);
     document.querySelector(".todolist").innerHTML = "";
     kdbFind(db, "storeList", () => 1 === 1)
     .then ((list) => {
-        console.log(list);
+        // console.log(list);
         list.forEach((todo) => {
             switch (todo.done) {
                 case 1:
@@ -184,7 +183,7 @@ function reloadTbody (db) {
                 default:
                     // そのままの値
             }
-            console.log(todo);
+            // console.log(todo);
             drawTodoList(todo.id, todo.name, todo.done);
         });
     })
@@ -206,10 +205,10 @@ function reloadTbody (db) {
                 let confirm = window.confirm("消してもいいですか？");
                 if (confirm) {
                     let id = todoDeleteButton.name;
-                    kdbDelete(db, "storeList", id)
+                    kdbDelete(db, "storeList", Number(id))
                     .then(() => {
                         console.log("deleteOK");
-                        reloadTbody();
+                        reloadTbody(db);
                     })
                     .catch((error) => {
                         console.log("kdbDeleteError: " + error);
@@ -254,7 +253,7 @@ window.onload = () => {
             kdbAdd(db, "storeList", {name:todoName, done:todoDone})
             .then((key) => {
                 console.log(key);
-                reloadTbody();
+                reloadTbody(db);
             })
             .catch((error) => {
                 console.log(error);
