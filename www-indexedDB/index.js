@@ -1,7 +1,7 @@
 let db;
 
 function mydbopen (dbName, dbVer) {
-    // window.indexedDB.deleteDatabase("todo");
+    window.indexedDB.deleteDatabase("todo");
     return kdbOpen(dbName, dbVer, (event) => {
         console.log("onupgradeneeded: ");
         // console.log(event);
@@ -129,7 +129,7 @@ async function createEditForm (db, id) {
             inputDone = inputDoneFalse.value;
         }
 
-        await kdbPut(db, "storeList", {id:Number(id), name:inputName.value, done:inputDone})
+        await kdbPut(db, "storeList", {name:inputName.value, done:Number(inputDone), id:Number(id)})
         reloadTbody();
         document.querySelector(".edittodo").innerHTML = "";
     });
@@ -209,8 +209,7 @@ window.onload = async () => {
                 todoDone = radio.value;
             }
         });
-
-        let key = await kdbAdd(db, "storeList", {name:todoName, done:todoDone})
+        let key = await kdbAdd(db, "storeList", {name:todoName, done:Number(todoDone)})
         console.log(key);
         reloadTbody();
     });
