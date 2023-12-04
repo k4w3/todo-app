@@ -108,9 +108,13 @@ app.use(router.allowedMethods());
 app.use(async (context, next) => {
   try {
     await context.send({
-      root: `${Deno.cwd()}/www-indexedDB`,
+      root: `${Deno.cwd()}/www-vue`,
       index: "index.html",
     });
+    // await context.send({
+    //   root: `${Deno.cwd()}/www-indexedDB`,
+    //   index: "index.html",
+    // });
     // await context.send({
     //   root: `${Deno.cwd()}/www`,
     //   index: "index.html",
