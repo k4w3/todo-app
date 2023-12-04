@@ -83,8 +83,6 @@ function drawTodoList (id, name, done) {
 };
 
 function createEditForm (db, id) {
-    console.log(typeof id);
-    console.log(typeof Number(id));
     kdbGet(db, "storeList", Number(id))
     .then((todo) => {
         switch (todo.done) {
@@ -97,7 +95,6 @@ function createEditForm (db, id) {
             default:
                 // そのままの値
         }
-        console.log(todo);
 
         let spanName = document.createElement("span");
         spanName.textContent = "名前: ";
@@ -133,7 +130,6 @@ function createEditForm (db, id) {
 
             kdbPut(db, "storeList", {id:Number(id), name:inputName.value, done:inputDone})
             .then((key) => {
-                console.log(key);
                 reloadTbody(db);
                 document.querySelector(".edittodo").innerHTML = "";
             })
@@ -167,11 +163,9 @@ function createEditForm (db, id) {
 }
 
 function reloadTbody (db) {
-    console.log(db);
     document.querySelector(".todolist").innerHTML = "";
     kdbFind(db, "storeList", () => 1 === 1)
     .then ((list) => {
-        // console.log(list);
         list.forEach((todo) => {
             switch (todo.done) {
                 case 1:
@@ -183,7 +177,6 @@ function reloadTbody (db) {
                 default:
                     // そのままの値
             }
-            // console.log(todo);
             drawTodoList(todo.id, todo.name, todo.done);
         });
     })
@@ -192,7 +185,6 @@ function reloadTbody (db) {
         todoEditButtonArray.forEach((todoEditButton)=> {
                 todoEditButton.addEventListener("click", (event) => {
                     // event.preventDefault();
-                    console.log(todoEditButton.name);
                     let id = todoEditButton.name;
                     createEditForm(db, id);
                 });
@@ -201,13 +193,11 @@ function reloadTbody (db) {
         todoDeleteButtonArray.forEach((todoDeleteButton) => {
             todoDeleteButton.addEventListener("click", (event) => {
                 // event.preventDefault();
-                console.log(todoDeleteButton.name);
                 let confirm = window.confirm("消してもいいですか？");
                 if (confirm) {
                     let id = todoDeleteButton.name;
                     kdbDelete(db, "storeList", Number(id))
                     .then(() => {
-                        console.log("deleteOK");
                         reloadTbody(db);
                     })
                     .catch((error) => {
@@ -226,13 +216,6 @@ window.onload = () => {
 
     mydbopen(dbName, dbVer)
     .then((db) => {
-        // kdbGet(db, "storeList", 1)
-        // .then((value) => {
-        //     console.log(value);
-        // })
-        // .catch((error) => {
-        //     console.log("kdbGetError: " + error);
-        // });
 
         reloadTbody(db);
 
@@ -247,9 +230,6 @@ window.onload = () => {
                 }
             });
 
-            console.log(todoDone);
-            console.log(todoName);
-
             kdbAdd(db, "storeList", {name:todoName, done:todoDone})
             .then((key) => {
                 console.log(key);
@@ -260,30 +240,4 @@ window.onload = () => {
             });
         });
     });
-
-    // document.querySelector(".sendbutton").addEventListener("click", (event) => {
-    //     event.preventDefault();
-    //     // console.log("hahahaha");
-    //     // selectTList()
-    //     // .then ((text) => {
-    //     //     console.log(text);
-    //     // })
-
-    //     // postTList("foo", 0)
-    //     // .then ((text) => {
-    //     //     console.log(text);
-    //     // });
-
-    //     // putTList("var", 1, 4)
-    //     // .then ((text) => {
-    //     //     console.log(text);
-    //     // });
-
-    //     // deleteTList(4)
-    //     // .then ((text) => {
-    //     //     console.log(text);
-    //     // });
-
-    // });
-
 };
