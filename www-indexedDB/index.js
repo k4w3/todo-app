@@ -1,7 +1,7 @@
 let db;
 
 function mydbopen (dbName, dbVer) {
-    window.indexedDB.deleteDatabase("todo");
+    // window.indexedDB.deleteDatabase("todo");
     return kdbOpen(dbName, dbVer, (event) => {
         console.log("onupgradeneeded: ");
         // console.log(event);
@@ -54,11 +54,11 @@ function mydbopen (dbName, dbVer) {
 
 function drawTodoList (id, name, done) {
     let tdId = document.createElement("td");
-    tdId.innerHTML = id;
+    tdId.innerText = id;
     let tdName = document.createElement("td");
-    tdName.innerHTML = name;
+    tdName.innerText = name;
     let tdDone = document.createElement("td");
-    tdDone.innerHTML = done;
+    tdDone.innerText = done;
 
     let tdEditButton = document.createElement("td");
     let editButton = document.createElement("button");
