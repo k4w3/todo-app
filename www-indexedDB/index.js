@@ -109,10 +109,28 @@ async function createEditForm (db, id) {
     spanDone.textContent = "対応済み: ";
 
     let labelDoneTrue = document.createElement("label");
-    labelDoneTrue.innerHTML = '<input type="radio" id="editradiosdoneTrue" name="editradiosdone" value="1" style="marginRight: 1em">はい'
+    labelDoneTrue.style.marginRight = "1em";
+    let inputRadioDoneTrue = document.createElement("input");
+    inputRadioDoneTrue.setAttribute("type", "radio");
+    inputRadioDoneTrue.setAttribute("id", "editradiosdoneTrue");
+    inputRadioDoneTrue.setAttribute("name", "editradiosdone");
+    inputRadioDoneTrue.setAttribute("value", "1");
+    let spanDoneTrue = document.createElement("span");
+    spanDoneTrue.textContent = "はい";
+    labelDoneTrue.appendChild(inputRadioDoneTrue);
+    labelDoneTrue.appendChild(spanDoneTrue);
 
     let labelDoneFalse = document.createElement("label");
-    labelDoneFalse.innerHTML = '<input type="radio" id="editradiosdoneFalse" name="editradiosdone" value="0" style="marginRight: 1em">いいえ'
+    labelDoneFalse.style.marginRight = "1em";
+    let inputRadioDoneFalse = document.createElement("input");
+    inputRadioDoneFalse.setAttribute("type", "radio");
+    inputRadioDoneFalse.setAttribute("id", "editradiosdoneFalse");
+    inputRadioDoneFalse.setAttribute("name", "editradiosdone");
+    inputRadioDoneFalse.setAttribute("value", "0");
+    let spanDoneFalse = document.createElement("span");
+    spanDoneFalse.textContent = "いいえ";
+    labelDoneFalse.appendChild(inputRadioDoneFalse);
+    labelDoneFalse.appendChild(spanDoneFalse);
 
     let okButton = document.createElement("button");
     okButton.textContent = "OK";
