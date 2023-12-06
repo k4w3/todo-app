@@ -5,9 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script type="text/javascript" src="https://unpkg.com/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <script src="./kdb.js"></script>
     <script src="./index.js"></script>
 </head>
 <body id="app">
     <div>{{message}}</div>
+    <div>
+        <form>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>対応済み</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in arrayTodo">
+                <td>{{item.id}}</td>
+                <td>{{item.name}}</td>
+                <td>{{(item.done === 1) ? "ture" : "false"}}</td>
+                <td></td>
+                <!-- <td><button type="submit" v-on:click="todoDelete()">削除</button></td>
+                <td><button type="submit" v-on:click="todoDelete($event, item.id)">削除</button></td> -->
+                <td><button type="button" v-on:click="todoDelete(item.id)">削除</button></td>
+            </tr>
+            </tbody>
+        </table>
+        </form>
+    </div>
 </body>
 </html>
