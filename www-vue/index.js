@@ -50,39 +50,82 @@ function openTodoDb () {
     });
 }
 
-const FooApp = {
+const EditForm = {
+    data () {
+        return {
+            showModal: false,
+            id: null,
+            name: "",
+            done: "0",
+        };
+    },
+    methods : {
+        open (item) {
+            if (item) {
+                this.id = item.id;
+                this.name = item.name;
+                this.done = String(item.done);
+            } else {
+                this.id = 0;
+                this.name = "";
+                this.done = "0";
+            }
+            this.showModal = true;
+        },
+        close (event) {
+            event.preventDefault();
+            this.showModal = false;
+        },
+        async submit (event) {
+            event.preventDefault();
+            if (this.id === 0) {
+                console.log("追加");
+                await kdbAdd(this.$parent.db, "storeList", {name:this.name, done:Number(this.done)});
+            } else {
+                console.log("更新");
+                await kdbPut(this.$parent.db, "storeList", {name:this.name, done:Number(this.done), id:this.id});
+            }
+            this.showModal = false;
+            this.$parent.todoReload();
+        },
+    },
+    template: `
+<div class="modal-overlay" v-show="showModal">
+  <div class="modal-content">
+    <form>
+        <div>
+            名前:
+            <input type="text" v-model="name">
+        </div>
+        <div>
+            対応済み:
+            <label><input type="radio" v-model="done" value="1">はい</label>
+            <label><input type="radio" v-model="done" value="0" checked>いいえ</label>
+        </div>
+        <div>
+            <button type="button" v-on:click="submit">送信</button>
+            <button type="button" v-on:click="close">キャンセル</button>
+        </div>
+    </form>
+  </div>
+</div>
+`
+};
+
+const TodoApp = {
     data () {
         return {
             db: null,
             arrayTodo: [],
-            message : "",
+            // message : "",
         };
     },
     async mounted () {
-        this.message = "hello";
+        // this.message = "hello";
         this.db = await openTodoDb();
         this.todoReload();
-        // list.forEach((todo) => {
-        //     switch (todo.done) {
-        //         case 1:
-        //             todo.done = "true";
-        //             break;
-        //         case 0:
-        //             todo.done = "false";
-        //             break;
-        //         default:
-        //             // そのままの値
-        //     }
-        //     drawTodoList(todo.id, todo.name, todo.done);
-        // });
-
     },
     methods : {
-        // todoDelete (event, id) {
-        //     event.preventDefault();
-        //     console.log("delete");
-        //     console.log("id: " + id);
-        // },
         async todoDelete (id) {
             let confirm = window.confirm("消してもいいですか？");
             if (confirm) {
@@ -93,31 +136,13 @@ const FooApp = {
         async todoReload () {
             this.arrayTodo = await kdbFind(this.db, "storeList", () => true);
         },
-
-        // open (candidates) {
-        //     let candidateKeys = [];
-        //     candidates.forEach((cand) => {
-        //         candidateKeys.push(cand.key);
-        //     });
-        //     this.candidatesText = candidateKeys.join("\n");
-        //     this.showModal = true;
-        // },
-        // close (event) {
-        //     event.preventDefault();
-        //     this.showModal = false;
-        // },
-        // submit (event) {
-        //     event.preventDefault();
-        //     if (this.candidatesText.trim().length === 0) {
-        //         return;
-        //     }
-        //     this.$root.setCandidates(this.candidatesText);
-        //     this.showModal = false;
-        // },
     },
+    components: {
+        EditForm,
+    }
 };
 
 window.onload = function () {
-    const app = Vue.createApp(FooApp);
+    const app = Vue.createApp(TodoApp);
     app.mount('#app');
 };
