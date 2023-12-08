@@ -1,90 +1,3 @@
-function selectTList() {
-    return new Promise((resolve, reject) => {
-        let req = new XMLHttpRequest();
-        req.open("GET", "/api/TList");
-        req.onload = (event) => {
-            resolve(req.responseText);
-        };
-        req.send();
-    });
-};
-
-function getTList(id) {
-    return new Promise((resolve, reject) => {
-        let req = new XMLHttpRequest();
-        req.open("GET", "/api/TList/" + id);
-        req.onload = (event) => {
-            resolve(req.responseText);
-        };
-        req.send();
-    });
-};
-
-function postTList(name, done) {
-    return new Promise((resolve, reject) => {
-
-        let postData = "name=" + encodeURIComponent(name);
-        postData += "&done=" + encodeURIComponent(done);
-
-        let req = new XMLHttpRequest();
-        req.open("POST", "/api/TList");
-        req.onload = (event) => {
-            if (req.readyState === req.DONE) {
-                if (req.status === 200) {
-                    resolve(req.responseText);
-                } else {
-                    reject(req.responseText);
-                }
-            }
-        };
-
-        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        req.send(postData);
-    });
-};
-
-function putTList(name, done, id) {
-    return new Promise((resolve, reject) => {
-
-        let putData = "name=" + encodeURIComponent(name);
-        putData += "&done=" + encodeURIComponent(done);
-
-        let req = new XMLHttpRequest();
-        req.open("PUT", "/api/TList/" + id);
-        req.onload = (event) => {
-            if (req.readyState === req.DONE) {
-                if (req.status === 200) {
-                    resolve(req.responseText);
-                } else {
-                    reject(req.responseText);
-                }
-            }
-        };
-
-        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        req.send(putData);
-    });
-};
-
-function deleteTList(id) {
-    return new Promise((resolve, reject) => {
-
-        let req = new XMLHttpRequest();
-        req.open("DELETE", "/api/TList/" + id);
-        req.onload = (event) => {
-            if (req.readyState === req.DONE) {
-                if (req.status === 200) {
-                    resolve(req.responseText);
-                } else {
-                    reject(req.responseText);
-                }
-            }
-        };
-
-        req.send();
-    });
-};
-
 function drawTodoList (id, name, done) {
     let tdId = document.createElement("td");
     tdId.innerHTML = id;
@@ -136,46 +49,63 @@ function createEditForm (id) {
         console.log(todo);
 
         let spanName = document.createElement("span");
-        let spanDone = document.createElement("span");
+        spanName.textContent = "名前: ";
 
         let inputName = document.createElement("input");
-        let inputDone = document.createElement("input");
+        inputName.setAttribute("type", "text");
+        inputName.setAttribute("value", todo.name);
+        inputName.style.marginRight = "1em";
+
+        let spanDone = document.createElement("span");
+        spanDone.textContent = "対応済み: ";
+
+        let labelDoneTrue = document.createElement("label");
+        labelDoneTrue.innerHTML = '<input type="radio" id="editradiosdoneTrue" name="editradiosdone" value="1" style="marginRight: 1em">はい'
+
+        let labelDoneFalse = document.createElement("label");
+        labelDoneFalse.innerHTML = '<input type="radio" id="editradiosdoneFalse" name="editradiosdone" value="0" style="marginRight: 1em">いいえ'
 
         let okButton = document.createElement("button");
-
-        spanName.textContent = "name: ";
-        spanDone.textContent = "done: ";
-
         okButton.textContent = "OK";
         okButton.setAttribute("type", "button");
         okButton.setAttribute("class", "okbutton");
 
         okButton.addEventListener("click", (event) => {
-            putTList(inputName.value, inputDone.value, id)
+            let inputDoneTrue = document.querySelector("#editradiosdoneTrue");
+            let inputDoneFalse = document.querySelector("#editradiosdoneFalse");
+            let inputDone;
+            if (inputDoneTrue.checked) {
+                inputDone = inputDoneTrue.value;
+            } else if (inputDoneFalse.checked) {
+                inputDone = inputDoneFalse.value;
+            }
+
+            putTList(inputName.value, inputDone, id)
             .then ((text) => {
                 console.log(text);
                 reloadTbody();
+                document.querySelector(".edittodo").innerHTML = "";
             });
         });
-
-        inputName.setAttribute("type", "text");
-        inputName.setAttribute("value", todo.name);
-        inputDone.setAttribute("type", "text");
-        inputDone.setAttribute("value", todo.done);
-
-        inputName.style.marginRight = "1em";
-        inputDone.style.marginRight = "1em";
 
         let editForm = document.createElement("form");
 
         editForm.appendChild(spanName);
         editForm.appendChild(inputName);
         editForm.appendChild(spanDone);
-        editForm.appendChild(inputDone);
+        editForm.appendChild(labelDoneTrue);
+        editForm.appendChild(labelDoneFalse);
         editForm.appendChild(okButton);
 
         document.querySelector(".edittodo").innerHTML = "";
         document.querySelector(".edittodo").appendChild(editForm);
+
+        if (todo.done === "true") {
+            document.querySelector("#editradiosdoneTrue").checked = true;
+        }
+        if (todo.done === "false") {
+            document.querySelector("#editradiosdoneFalse").checked = true;
+        }
     });
 }
 
@@ -183,10 +113,9 @@ function reloadTbody () {
     document.querySelector(".todolist").innerHTML = "";
     selectTList()
     .then ((list) => {
-        console.log(list);
+        // console.log(list);
         let listObjArray = JSON.parse(list);
-        for (let i = 0; i < listObjArray.length; i++) {
-            let todo = listObjArray[i];
+        listObjArray.forEach((todo) => {
             switch (todo.done) {
                 case 1:
                     todo.done = "true";
@@ -199,29 +128,24 @@ function reloadTbody () {
             }
             console.log(todo);
             drawTodoList(todo.id, todo.name, todo.done);
-        };
+        });
     })
     .then (() => {
         let todoEditButtonArray = document.querySelectorAll(".todoeditbutton");
-        for (let i = 0; i < todoEditButtonArray.length; i++) {
-            let todoEditButton = todoEditButtonArray[i];
-            // let todoEditButton = document.querySelector(".todoeditbutton");
-            todoEditButton.addEventListener("click", (event) => {
-                // event.preventDefault();
-
-                console.log(todoEditButton.name);
-                let id = todoEditButton.name;
-                createEditForm(id);
-            });
-        }
+        todoEditButtonArray.forEach((todoEditButton)=> {
+                todoEditButton.addEventListener("click", (event) => {
+                    // event.preventDefault();
+                    console.log(todoEditButton.name);
+                    let id = todoEditButton.name;
+                    createEditForm(id);
+                });
+        });
         let todoDeleteButtonArray = document.querySelectorAll(".tododeletebutton");
-        for (let i = 0; i < todoDeleteButtonArray.length; i++) {
-            let todoDeleteButton = todoDeleteButtonArray[i];
+        todoDeleteButtonArray.forEach((todoDeleteButton) => {
             todoDeleteButton.addEventListener("click", (event) => {
                 // event.preventDefault();
                 console.log(todoDeleteButton.name);
                 let confirm = window.confirm("消してもいいですか？");
-
                 if (confirm) {
                     let id = todoDeleteButton.name;
                     deleteTList(id)
@@ -231,51 +155,24 @@ function reloadTbody () {
                     });
                 };
             });
-        }
+        });
     });
 }
 
 window.onload = () => {
-    // getTList(3)
-    // .then ((todo) => {
-    //     console.log(todo);
-    // })
-
-    // createEditForm(3);
-
-    // document.querySelector(".hoge").innerHTML="kameyama";
-    // let tdId = document.createElement("td");
-    // tdId.innerHTML = "101";
-    // let tdName = document.createElement("td");
-    // tdName.innerHTML = "kame";
-    // let tdDone = document.createElement("td");
-    // tdDone.innerHTML = "1";
-
-    // let tr = document.createElement("tr");
-    // tr.appendChild(tdId);
-    // tr.appendChild(tdName);
-    // tr.appendChild(tdDone);
-
-    // document.querySelector(".todolist").appendChild(tr);
-
-    // drawTodoList("10", "taka", "0" );
-    // drawTodoList("11", "ha", "0" );
-    // drawTodoList("12", "haha", "0" );
 
     reloadTbody();
 
     document.querySelector(".todosendbutton").addEventListener("click", (event) => {
         event.preventDefault();
-        console.log("todo");
         let todoName = document.querySelector(".textname").value;
-        let radiosDone = document.querySelectorAll(".radiodone");
+        let radiosDone = document.querySelectorAll(".inputradiosdone");
         let todoDone;
-        for (let i = 0; i < radiosDone.length; i++) {
-            let r = radiosDone[i];
-            if (r.checked) {
-                todoDone = r.value;
+        radiosDone.forEach((radio) => {
+            if (radio.checked) {
+                todoDone = radio.value;
             }
-        }
+        });
 
         console.log(todoDone);
         console.log(todoName);
@@ -288,29 +185,29 @@ window.onload = () => {
 
     });
 
-    document.querySelector(".sendbutton").addEventListener("click", (event) => {
-        event.preventDefault();
-        // console.log("hahahaha");
-        // selectTList()
-        // .then ((text) => {
-        //     console.log(text);
-        // })
+    // document.querySelector(".sendbutton").addEventListener("click", (event) => {
+    //     event.preventDefault();
+    //     // console.log("hahahaha");
+    //     // selectTList()
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // })
 
-        // postTList("foo", 0)
-        // .then ((text) => {
-        //     console.log(text);
-        // });
+    //     // postTList("foo", 0)
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // });
 
-        // putTList("var", 1, 4)
-        // .then ((text) => {
-        //     console.log(text);
-        // });
+    //     // putTList("var", 1, 4)
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // });
 
-        // deleteTList(4)
-        // .then ((text) => {
-        //     console.log(text);
-        // });
+    //     // deleteTList(4)
+    //     // .then ((text) => {
+    //     //     console.log(text);
+    //     // });
 
-    });
+    // });
 
 };

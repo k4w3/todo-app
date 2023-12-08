@@ -8,7 +8,6 @@ const router = new Router();
 
 router.get("/api/TList", (context) => {
     console.log("GET /api/TList");
-    // context.response.body = "kameyamatakahito";
     const db = new DB("todo.db");
     // let res = db.query("SELECT * FROM TList");
     let res = db.queryEntries("SELECT id, name, done FROM TList");
@@ -109,9 +108,13 @@ app.use(router.allowedMethods());
 app.use(async (context, next) => {
   try {
     await context.send({
-      root: `${Deno.cwd()}/www`,
+      root: `${Deno.cwd()}/www-indexedDB`,
       index: "index.html",
     });
+    // await context.send({
+    //   root: `${Deno.cwd()}/www`,
+    //   index: "index.html",
+    // });
   } catch {
     await next();
   }
